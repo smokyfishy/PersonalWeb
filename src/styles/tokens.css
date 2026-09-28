@@ -1,0 +1,39 @@
+/* Design tokens. The site is a single dark world lit by the circle, so there is
+   no light theme: every surface is built on these values. */
+:root {
+  color-scheme: dark;
+
+  /* Palette */
+  --ink: #0d0913; /* near-black with a plum cast */
+  --plum: #22112c;
+  --plum-2: #2f1a3d;
+  --violet: #5a3a8f;
+  --arc: #7fb2ff; /* the circle's electric blue */
+  --arc-soft: rgba(127, 178, 255, 0.35);
+  --brass: #d4a24c; /* warm gold: interactive accents only */
+  --brass-bright: #f0c26b;
+  --chalk: #efe9f7; /* body text */
+  --mist: #b9aecb; /* secondary text, ≥ 7:1 on --ink */
+  --line: rgba(239, 233, 247, 0.14);
+  --panel: rgba(34, 17, 44, 0.72);
+
+  /* Type */
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-body: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif;
+  --step--1: clamp(0.86rem, 0.83rem + 0.12vw, 0.94rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.45vw, 1.45rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2.05rem);
+  --step-3: clamp(2rem, 1.6rem + 1.9vw, 3.2rem);
+  --step-4: clamp(2.6rem, 1.9rem + 3.4vw, 5rem);
+
+  /* Space & shape */
+  --gutter: clamp(16px, 4vw, 48px);
+  --measure: 68ch;
+  --radius-s: 8px;
+  --radius-l: 22px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

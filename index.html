@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Akshay Karthik — machine learning, robotics &amp; biomedical engineering</title>
+    <meta
+      name="description"
+      content="Portfolio of Akshay Karthik, a Duke University ECE and Computer Science student building machine-learning systems for robotics and biomedical engineering."
+    />
+    <meta name="theme-color" content="#0d0913" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Akshay Karthik" />
+    <meta
+      property="og:description"
+      content="Machine learning for robotics and biomedical engineering: KINETIX, THETA, and multi-omics research."
+    />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d0913'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%237fb2ff' stroke-width='3'/%3E%3Cpath d='M32 10 45 50 11 25h42L19 50Z' fill='none' stroke='%237fb2ff' stroke-width='2'/%3E%3Ccircle cx='32' cy='10' r='4' fill='%23d4a24c'/%3E%3C/svg%3E"
+    />
+    <!-- Only the opening artwork is preloaded; section graphics load on demand. -->
+    <link rel="preload" as="image" href="/img/transmutation-circle-blur.webp" type="image/webp" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      imagesrcset="/img/edward-body-800.avif 800w, /img/edward-body-1200.avif 1200w, /img/edward-body-1619.avif 1619w"
+      imagesizes="96vw"
+    />
+  </head>
+  <body class="is-scene">
+    <a class="skip-link" href="#content" id="skip-link">Skip to content</a>
+
+    <!-- Backdrop and fog planes for the sky-to-circle descent. Decorative. -->
+    <div class="sky" aria-hidden="true"></div>
+
+    <!-- The hub: the transmutation circle with five real links. -->
+    <main class="hub" id="hub" aria-labelledby="hub-title">
+      <header class="hub-head">
+        <h1 id="hub-title" class="hub-title" tabindex="-1">Akshay Karthik</h1>
+      </header>
+      <div class="hub-stage">
+        <div class="circle-frame" id="circle-frame">
+          <div class="circle-camera" id="circle-camera">
+            <img
+              class="circle-img circle-img--blur"
+              src="/img/transmutation-circle-blur-soft.webp"
+              alt=""
+              aria-hidden="true"
+              width="960"
+              height="540"
+              decoding="async"
+            />
+            <picture class="circle-img circle-img--sharp" aria-hidden="true">
+              <source
+                type="image/avif"
+                srcset="/img/transmutation-circle-900.avif 900w, /img/transmutation-circle-1400.avif 1400w, /img/transmutation-circle-1672.avif 1672w"
+                sizes="(max-width: 700px) 100vw, 90vw"
+              />
+              <source
+                type="image/webp"
+                srcset="/img/transmutation-circle-900.webp 900w, /img/transmutation-circle-1400.webp 1400w, /img/transmutation-circle-1672.webp 1672w"
+                sizes="(max-width: 700px) 100vw, 90vw"
+              />
+              <img src="/img/transmutation-circle-1400.webp" alt="" width="1672" height="941" decoding="async" />
+            </picture>
+          </div>
+          <nav class="hotspots" id="hotspots" aria-label="Transmutation circle: choose a section"></nav>
+        </div>
+      </div>
+      <nav class="hub-list" id="hub-list" aria-label="Sections"></nav>
+      <footer class="hub-foot">
+        <p class="hub-hint" id="hub-hint">Choose a circle to explore.</p>
+        <a class="btn btn--quiet" href="/?intro" id="replay-intro">Replay intro</a>
+      </footer>
+    </main>
+
+    <div class="fog" aria-hidden="true">
+      <p class="descent-hint">Click or press any key to skip</p>
+      <div class="fog-plane fog-plane--far"></div>
+      <div class="fog-plane fog-plane--mid"></div>
+      <div class="fog-plane fog-plane--near"></div>
+    </div>
+
+    <!-- Two-slide introduction. Edward stands at the left edge over the blurred
+         circle; only his speech bubble changes between slides. The spoken words
+         live in the artwork, and the bubble's alt text carries them. -->
+    <section class="intro" id="intro" aria-label="Introduction" hidden>
+      <div class="intro-backdrop" id="intro-backdrop" aria-hidden="true">
+        <div class="intro-backdrop-img"></div>
+      </div>
+      <button class="btn btn--quiet intro-skip" type="button" id="intro-skip">Skip intro</button>
+      <div class="intro-figure" id="intro-figure">
+        <div class="intro-rim" aria-hidden="true"></div>
+        <picture class="ed-layer ed-body" id="ed-body">
+          <source type="image/avif" srcset="/img/edward-body-800.avif 800w, /img/edward-body-1200.avif 1200w, /img/edward-body-1619.avif 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <source type="image/webp" srcset="/img/edward-body-800.webp 800w, /img/edward-body-1200.webp 1200w, /img/edward-body-1619.webp 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <img src="/img/edward-body-1200.webp" width="1619" height="972" alt="" fetchpriority="high" />
+        </picture>
+        <picture class="ed-layer ed-bubble is-active" data-slide="0">
+          <source type="image/avif" srcset="/img/edward-hello-bubble-800.avif 800w, /img/edward-hello-bubble-1200.avif 1200w, /img/edward-hello-bubble-1619.avif 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <source type="image/webp" srcset="/img/edward-hello-bubble-800.webp 800w, /img/edward-hello-bubble-1200.webp 1200w, /img/edward-hello-bubble-1619.webp 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <img
+            src="/img/edward-hello-bubble-1200.webp"
+            width="1619"
+            height="972"
+            alt="An illustrated Edward Elric smiles and reaches out his hand. His speech bubble says: “Hello! It is nice to meet you.”"
+          />
+        </picture>
+        <picture class="ed-layer ed-bubble" data-slide="1" aria-hidden="true">
+          <source type="image/avif" srcset="/img/edward-welcome-bubble-800.avif 800w, /img/edward-welcome-bubble-1200.avif 1200w, /img/edward-welcome-bubble-1619.avif 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <source type="image/webp" srcset="/img/edward-welcome-bubble-800.webp 800w, /img/edward-welcome-bubble-1200.webp 1200w, /img/edward-welcome-bubble-1619.webp 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <img
+            src="/img/edward-welcome-bubble-1200.webp"
+            width="1619"
+            height="972"
+            alt="Edward Elric continues, hand still outstretched. His speech bubble says: “My name is Akshay Karthik, welcome to my website!”"
+            loading="eager"
+          />
+        </picture>
+        <picture class="ed-layer ed-bubble" data-slide="2" aria-hidden="true">
+          <source type="image/avif" srcset="/img/edward-truth-bubble-800.avif 800w, /img/edward-truth-bubble-1200.avif 1200w, /img/edward-truth-bubble-1619.avif 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <source type="image/webp" srcset="/img/edward-truth-bubble-800.webp 800w, /img/edward-truth-bubble-1200.webp 1200w, /img/edward-truth-bubble-1619.webp 1619w" sizes="(max-width: 700px) 100vw, 96vw" />
+          <img
+            src="/img/edward-truth-bubble-1200.webp"
+            width="1619"
+            height="972"
+            alt="Edward Elric leans in with a grin. His speech bubble asks: “Are you ready to learn the truth?”"
+            loading="eager"
+          />
+        </picture>
+      </div>
+      <div class="intro-controls" id="intro-controls">
+        <button class="btn intro-prev" type="button" id="intro-prev">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          Previous
+        </button>
+        <p class="intro-step" id="intro-step" aria-hidden="true"><span></span><span></span><span></span></p>
+        <button class="btn btn--primary intro-next" type="button" id="intro-next">
+          Next
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+      </div>
+      <p class="visually-hidden" aria-live="polite" id="intro-live"></p>
+    </section>
+
+    <!-- The Door of Truth: the final intro scene and the route into the circle.
+         The artwork is one supplied image; depth comes from parallax copies. -->
+    <section class="door" id="door" aria-labelledby="door-title" hidden>
+      <div class="door-surround" aria-hidden="true"></div>
+      <div class="door-stage" id="door-stage">
+        <div class="door-layer door-back" id="door-back">
+          <picture>
+            <source type="image/avif" srcset="/img/door-of-truth-900.avif 900w, /img/door-of-truth-1400.avif 1400w, /img/door-of-truth-1672.avif 1672w" sizes="160vw" />
+            <source type="image/webp" srcset="/img/door-of-truth-900.webp 900w, /img/door-of-truth-1400.webp 1400w, /img/door-of-truth-1672.webp 1672w" sizes="160vw" />
+            <img
+              src="/img/door-of-truth-1400.webp"
+              width="1672"
+              height="941"
+              alt="A towering stone double door covered in alchemical engravings stands slightly open in a violet haze. A single eye glows in the narrow opening, and a small white figure sits beside the right door."
+            />
+          </picture>
+        </div>
+        <div class="door-layer door-front" id="door-front" aria-hidden="true">
+          <picture>
+            <source type="image/avif" srcset="/img/door-of-truth-900.avif 900w, /img/door-of-truth-1400.avif 1400w, /img/door-of-truth-1672.avif 1672w" sizes="160vw" />
+            <source type="image/webp" srcset="/img/door-of-truth-900.webp 900w, /img/door-of-truth-1400.webp 1400w, /img/door-of-truth-1672.webp 1672w" sizes="160vw" />
+            <img src="/img/door-of-truth-1400.webp" width="1672" height="941" alt="" />
+          </picture>
+          <img class="door-glyphs" id="door-glyphs" src="/img/door-glyphs.webp" width="1672" height="941" alt="" />
+        </div>
+        <div class="door-eye" id="door-eye" aria-hidden="true"></div>
+      </div>
+      <div class="door-shade" id="door-shade" aria-hidden="true"></div>
+      <h2 class="visually-hidden" id="door-title">The Gate of Truth</h2>
+      <button class="btn btn--quiet door-skip" type="button" id="door-skip">Skip intro</button>
+      <div class="door-controls" id="door-controls">
+        <button class="btn door-enter" type="button" id="door-enter">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 3.5 17 18 4.2 9h15.6L7 18Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+          </svg>
+          Enter the Gate of Truth
+        </button>
+      </div>
+      <button class="btn door-prev" type="button" id="door-prev">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        Previous
+      </button>
+      <div class="gate-void" id="gate-void" aria-hidden="true"></div>
+    </section>
+
+    <!-- Section view: filled from src/content by src/sections. -->
+    <div class="section-view" id="section-view" hidden>
+      <header class="section-bar">
+        <a class="btn return-btn" href="/" id="return-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 3.5 17 18 4.2 9h15.6L7 18Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+          </svg>
+          Return to circle
+        </a>
+        <nav class="section-switch" id="section-switch" aria-label="Sections"></nav>
+      </header>
+      <main class="section-main" id="section-main" tabindex="-1"></main>
+    </div>
+
+    <div class="flare" id="flare" aria-hidden="true"></div>
+    <canvas class="fx-canvas" id="fx-canvas" aria-hidden="true"></canvas>
+    <svg class="iris-rim" id="iris-rim" aria-hidden="true" focusable="false">
+      <circle class="iris-glow" cx="0" cy="0" r="0" />
+      <circle class="iris-core" cx="0" cy="0" r="0" />
+    </svg>
+    <p class="visually-hidden" aria-live="polite" id="route-live"></p>
+
+    <noscript>
+      <div class="noscript">
+        <h1>Akshay Karthik</h1>
+        <p>
+          This portfolio needs JavaScript for its navigation. You can reach Akshay at
+          <a href="mailto:akshay.karthik@duke.edu">akshay.karthik@duke.edu</a> or on
+          <a href="https://www.linkedin.com/in/akshay-karthik-a219a7311/">LinkedIn</a>.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+tests/e2e/__screens__/
+# Resumes contain a home address and phone number — never commit or publish them.
+*.pdf
+qa/
+# Private-data fragments used by the privacy tests; never commit.
+tests/private-patterns.local.txt

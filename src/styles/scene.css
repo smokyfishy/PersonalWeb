@@ -1,0 +1,711 @@
+/* Scene layers, bottom to top:
+   sky (0) → hub (1) → fog (2) → intro (3) → section view (4) → flare (5).
+   body[data-view] holds the settled state; transitions animate between these
+   states with the Web Animations API (src/app/camera.ts). */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  /* A heavily darkened blur of the circle itself, so the artwork's edges
+     dissolve into matching colour. */
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(13, 9, 19, 0.35), rgba(7, 5, 11, 0.85) 75%),
+    url(/img/transmutation-circle-blur.webp) center / cover no-repeat,
+    #0d0913;
+}
+
+/* ---------- Hub ---------- */
+
+.hub {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'head' 'stage' 'foot';
+  padding: max(14px, env(safe-area-inset-top)) var(--gutter) max(10px, env(safe-area-inset-bottom));
+}
+
+.hub-head {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1rem;
+}
+
+.hub-title {
+  font-size: var(--step-2);
+  font-variation-settings: 'opsz' 72, 'SOFT' 50;
+  outline-offset: 6px;
+}
+
+.hub-stage {
+  grid-area: stage;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.circle-frame {
+  position: relative;
+  width: min(100cqw, 100cqh * 1.7768);
+  aspect-ratio: 1672 / 941;
+}
+
+.circle-camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 48%;
+  will-change: transform;
+  /* Feather the artwork's rectangular edge into the sky. The ramps stop short
+     of every node and printed label (nearest: ABOUT, 4% from the top). */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 92%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.circle-img,
+.circle-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hub-foot {
+  grid-area: foot;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--mist);
+  font-size: var(--step--1);
+}
+
+.hub-list {
+  display: none;
+}
+
+/* ---------- Hotspots ---------- */
+
+.hotspots {
+  position: absolute;
+  inset: 0;
+}
+
+.hotspot {
+  position: absolute;
+  display: block;
+  border-radius: 18px;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hs-ring {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  border: 2px solid transparent;
+  transition:
+    transform 220ms var(--ease-out),
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+  pointer-events: none;
+}
+
+.hs-underline {
+  position: absolute;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brass-bright);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 260ms var(--ease-out);
+  pointer-events: none;
+}
+
+.hotspot:hover .hs-ring,
+.hotspot:focus-visible .hs-ring,
+.hotspot.is-active .hs-ring {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: var(--brass-bright);
+  box-shadow:
+    0 0 0 6px rgba(240, 194, 107, 0.16),
+    0 0 36px 8px rgba(240, 194, 107, 0.35);
+}
+
+.hotspot:hover .hs-underline,
+.hotspot:focus-visible .hs-underline,
+.hotspot.is-active .hs-underline {
+  transform: scaleX(1);
+}
+
+.hotspot:focus-visible {
+  outline: 2px dashed var(--brass-bright);
+  outline-offset: 2px;
+}
+
+.hotspot.is-previous .hs-ring {
+  border-color: rgba(240, 194, 107, 0.55);
+}
+
+/* Arrival cue: one ring "breath" after the descent settles. */
+.hotspots.is-arriving .hs-ring {
+  animation: ring-breath 1.4s var(--ease-out) both;
+}
+@keyframes ring-breath {
+  0% {
+    border-color: rgba(240, 194, 107, 0);
+    box-shadow: 0 0 0 0 rgba(240, 194, 107, 0);
+  }
+  45% {
+    border-color: rgba(240, 194, 107, 0.8);
+    box-shadow: 0 0 30px 6px rgba(240, 194, 107, 0.35);
+  }
+  100% {
+    border-color: rgba(240, 194, 107, 0);
+    box-shadow: 0 0 0 0 rgba(240, 194, 107, 0);
+  }
+}
+
+/* Debug overlay (/?debug=hotspots) to check alignment against the artwork. */
+.debug-hotspots .hotspot {
+  background: rgba(127, 178, 255, 0.18);
+  outline: 1px solid var(--arc);
+}
+.debug-hotspots .hs-ring {
+  border-color: #ff5ea8;
+}
+
+/* Mobile / short screens: keep the whole circle, add an explicit list. */
+.hub-list-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(34, 17, 44, 0.6);
+  color: var(--chalk);
+  font-weight: 600;
+  text-decoration: none;
+}
+.hub-list-link:hover,
+.hub-list-link:focus-visible {
+  border-color: var(--brass);
+}
+.hub-list-link small {
+  color: var(--mist);
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  .hub {
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: 'head' 'stage' 'list' 'foot';
+    row-gap: 12px;
+    padding-inline: 16px;
+  }
+  .hub-stage {
+    container-type: inline-size;
+    margin-inline: -16px;
+  }
+  .circle-frame {
+    width: 100cqw;
+  }
+  .hub-list {
+    grid-area: list;
+    display: grid;
+    gap: 8px;
+  }
+  .hub-foot {
+    align-self: end;
+  }
+  .hub-hint {
+    display: none;
+  }
+}
+
+@media (max-height: 520px) and (min-width: 641px) {
+  .hub {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 30%);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'head head' 'stage list' 'foot foot';
+    column-gap: 16px;
+  }
+  .hub-list {
+    grid-area: list;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+  }
+  .hub-list-link {
+    min-height: 44px;
+  }
+  .hub-list-link small {
+    display: none;
+  }
+}
+
+/* ---------- Fog planes (descent) ---------- */
+
+.fog {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.fog-plane {
+  position: absolute;
+  inset: -20%;
+  will-change: transform, opacity;
+}
+
+.fog-plane--far {
+  background:
+    radial-gradient(ellipse 40% 30% at 30% 40%, rgba(120, 90, 180, 0.4), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 70% 60%, rgba(70, 50, 120, 0.45), transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(26, 15, 37, 0.25) 0%, rgba(13, 9, 19, 0.55) 85%);
+}
+.fog-plane--mid {
+  background:
+    radial-gradient(ellipse 35% 22% at 22% 70%, rgba(200, 185, 235, 0.28), transparent 70%),
+    radial-gradient(ellipse 30% 20% at 78% 28%, rgba(180, 200, 255, 0.24), transparent 70%),
+    radial-gradient(ellipse 25% 18% at 55% 85%, rgba(160, 130, 210, 0.3), transparent 70%);
+}
+.fog-plane--near {
+  background:
+    radial-gradient(ellipse 30% 25% at 12% 20%, rgba(230, 220, 250, 0.3), transparent 70%),
+    radial-gradient(ellipse 28% 24% at 88% 82%, rgba(210, 220, 255, 0.28), transparent 70%),
+    radial-gradient(ellipse 22% 18% at 85% 15%, rgba(200, 180, 240, 0.2), transparent 70%);
+}
+
+.descent-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  margin: 0;
+  text-align: center;
+  color: var(--mist);
+  font-size: var(--step--1);
+  opacity: 0.75;
+}
+
+/* ---------- Intro ---------- */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.intro[hidden] {
+  display: none;
+}
+
+/* The blurred transmutation circle fills the screen behind Edward. */
+.intro-backdrop {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 48%;
+  /* Soft edges, so the plate never shows a rectangle as it recedes. */
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 48%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 48%, #000 58%, transparent 100%);
+}
+.intro-backdrop-img {
+  position: absolute;
+  inset: -4%;
+  background: url(/img/transmutation-circle-blur.webp) center / cover no-repeat #0d0913;
+}
+.intro-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(13, 9, 19, 0.45), transparent 50%),
+    radial-gradient(ellipse at 55% 45%, rgba(13, 9, 19, 0) 30%, rgba(7, 5, 11, 0.6) 85%);
+  pointer-events: none;
+}
+
+/* Edward stands at the left edge; the artwork's own crop meets the screen
+   edges, and his bubble sits beside him where the artwork places it. */
+.intro-figure {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: min(96vw, 94dvh * 1.6656);
+  aspect-ratio: 1619 / 972;
+  transform-origin: 0% 100%;
+}
+.intro-rim {
+  position: absolute;
+  left: -10%;
+  bottom: -10%;
+  width: 75%;
+  height: 110%;
+  background: radial-gradient(ellipse 55% 60% at 45% 62%, rgba(127, 178, 255, 0.26), rgba(90, 58, 143, 0.18) 45%, transparent 72%);
+  pointer-events: none;
+}
+.ed-layer,
+.ed-layer img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* Bubbles grow from and collapse into the tip of the tail (866, 452 px). */
+.ed-bubble {
+  opacity: 0;
+  transform-origin: 53.5% 46.6%;
+}
+.ed-bubble.is-active {
+  opacity: 1;
+}
+
+.intro-controls {
+  position: absolute;
+  z-index: 3;
+  right: max(var(--gutter), env(safe-area-inset-right));
+  bottom: max(28px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: opacity 400ms ease;
+}
+.intro-next {
+  min-width: 124px;
+}
+.intro-prev[data-hidden] {
+  visibility: hidden;
+}
+
+.intro-step {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+}
+.intro-step span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(239, 233, 247, 0.28);
+  transition: background-color 200ms ease;
+}
+.intro-step[data-step='0'] span:nth-child(1),
+.intro-step[data-step='1'] span:nth-child(2),
+.intro-step[data-step='2'] span:nth-child(3) {
+  background: var(--brass-bright);
+}
+
+.intro-skip {
+  position: absolute;
+  z-index: 3;
+  top: max(10px, env(safe-area-inset-top));
+  right: 12px;
+}
+
+/* Next appears once the entrance has settled. */
+.intro:not(.is-ready) .intro-controls {
+  opacity: 0;
+}
+
+/* Portrait phones: Edward spans the width at the bottom; controls above him. */
+@media (max-aspect-ratio: 1 / 1) {
+  .intro-figure {
+    width: 100vw;
+  }
+  .intro-controls {
+    left: 16px;
+    right: 16px;
+    justify-content: center;
+    bottom: calc(100vw * 0.6004 + 28px);
+  }
+  .intro-rim {
+    width: 90%;
+  }
+}
+
+/* ---------- Energy sigil (transitions only) ---------- */
+
+.sigil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+}
+.sigil path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sigil .draw-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.sg-glow {
+  stroke: rgba(127, 178, 255, 0.22);
+}
+.sg-core {
+  stroke: #d8e6ff;
+}
+.sg-ticks {
+  stroke: rgba(216, 230, 255, 0.4);
+  stroke-width: 2;
+}
+.sg-energy {
+  opacity: 0;
+}
+.sg-energy .sg-glow {
+  stroke: rgba(240, 194, 107, 0.3);
+}
+.sg-energy .sg-core {
+  stroke: #ffe2a6;
+}
+
+/* ---------- Effects canvas ---------- */
+
+.fx-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Settled states ---------- */
+
+body[data-view='intro'] .hub,
+body[data-view='door'] .hub,
+body[data-view='section'] .hub {
+  opacity: 0;
+  visibility: hidden;
+}
+body[data-view='section'] .circle-img--sharp {
+  opacity: 0;
+}
+body[data-view='circle'] .circle-img--blur {
+  opacity: 0;
+}
+/* Transitional: the circle is visible, its chrome fades in via WAAPI. */
+body[data-view='descent'] :is(.hub-head, .hub-foot, .hub-list, .hotspots),
+body[data-view='gate'] :is(.hub-head, .hub-foot, .hub-list, .hotspots) {
+  opacity: 0;
+}
+
+/* ---------- Transition flare ---------- */
+
+.flare {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgba(190, 215, 255, 0.85) 0, rgba(127, 178, 255, 0.35) 12%, rgba(90, 58, 143, 0.2) 30%, transparent 60%);
+}
+
+.sg-rune {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Glowing rim that tracks the section iris as it opens and closes. */
+.iris-rim {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  overflow: visible;
+}
+.iris-rim circle {
+  fill: none;
+}
+.iris-glow {
+  stroke: rgba(240, 194, 107, 0.35);
+  stroke-width: 22;
+}
+.iris-core {
+  stroke: #ffe2a6;
+  stroke-width: 3;
+}
+
+/* ---------- Door of Truth ---------- */
+
+.door {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  background: #05030a;
+}
+.door[hidden] {
+  display: none;
+}
+.door-surround {
+  position: absolute;
+  inset: -6%;
+  background: url(/img/door-blur.webp) center / cover no-repeat;
+  opacity: 0.85;
+}
+
+/* The artwork box: cover-fit on wide screens, widened on portrait ones so the
+   whole door, the eye and the seated figure stay visible. */
+.door-stage {
+  --dw: max(100vw, 100dvh * 1.7768);
+  position: absolute;
+  width: var(--dw);
+  height: calc(var(--dw) * 0.5628);
+  left: calc(50vw - var(--dw) / 2);
+  top: calc(50dvh - var(--dw) * 0.2814);
+}
+@media (max-aspect-ratio: 1 / 1) {
+  .door-stage {
+    --dw: 165vw;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  }
+}
+.door-layer,
+.door-layer picture,
+.door-layer img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* Camera moves pivot on the eye in the opening (833, 432 px). */
+.door-layer {
+  transform-origin: 49.82% 45.91%;
+}
+/* Front copy: the door and its opening only, so it can move faster than the
+   haze behind it (parallax without inventing new artwork). */
+.door-front {
+  clip-path: polygon(31.8% 8.3%, 45.8% 2.3%, 47.9% 9%, 52% 9%, 52.2% 2.3%, 67.5% 8.8%, 69.9% 74.4%, 71.8% 74.4%, 71.8% 92.3%, 29.8% 92.3%);
+}
+.door-glyphs {
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+.door-eye {
+  position: absolute;
+  left: 49.82%;
+  top: 45.91%;
+  width: 16%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(216, 230, 255, 0.85) 0, rgba(127, 178, 255, 0.4) 28%, rgba(90, 58, 143, 0.18) 52%, transparent 70%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+.door-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 75% at 50% 46%, transparent 45%, rgba(5, 3, 10, 0.65) 100%);
+}
+
+.door-controls {
+  position: absolute;
+  z-index: 2;
+  left: var(--enter-x, 50%);
+  top: var(--enter-y, 86%);
+  transform: translate(-50%, -50%);
+}
+.door-enter {
+  min-height: 56px;
+  padding: 0 1.6em;
+  font-size: var(--step-1);
+  letter-spacing: 0.01em;
+  color: var(--chalk);
+  --btn-bg: rgba(13, 9, 19, 0.72);
+  --btn-border: rgba(240, 194, 107, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 0 4px rgba(240, 194, 107, 0.12),
+    0 0 40px rgba(127, 178, 255, 0.35);
+  white-space: nowrap;
+}
+.door-enter:hover {
+  --btn-bg: rgba(212, 162, 76, 0.92);
+  --btn-border: var(--brass-bright);
+  color: #1a0f08;
+}
+.door-enter svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+.door-prev {
+  position: absolute;
+  z-index: 2;
+  left: max(var(--gutter), env(safe-area-inset-left));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  --btn-bg: rgba(13, 9, 19, 0.6);
+}
+.door-skip {
+  position: absolute;
+  z-index: 2;
+  top: max(10px, env(safe-area-inset-top));
+  right: 12px;
+}
+.door:not(.is-ready) :is(.door-controls, .door-prev) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Threshold void during the gate transition. */
+.gate-void {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 46%, #1d1236 0%, #0b0716 45%, #05030a 80%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Slow haze drift while the door waits. */
+  .door.is-ready .door-surround {
+    animation: door-haze 14s ease-in-out infinite alternate;
+  }
+}
+@keyframes door-haze {
+  from {
+    transform: scale(1) translateX(0);
+  }
+  to {
+    transform: scale(1.06) translateX(-1.5%);
+  }
+}
+
+@media (max-height: 520px) {
+  .door-enter {
+    min-height: 46px;
+    font-size: var(--step-0);
+  }
+}

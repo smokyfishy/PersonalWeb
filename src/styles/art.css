@@ -1,0 +1,106 @@
+/* Reveal animations inside the custom illustrations. They run once, when the
+   figure scrolls into view (.is-visible), and are skipped entirely for
+   reduced-motion users, who see the final composition. */
+
+/* Animated classes go on wrapper <g> elements that carry no transform
+   attribute, because a CSS transform would replace the SVG attribute. */
+.art-canvas .anim-pop {
+  transform-box: fill-box;
+}
+
+.art .anim-draw .draw-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.art:not(.is-visible) .anim-draw .draw-path {
+  stroke-dashoffset: 1;
+}
+.art:not(.is-visible) :is(.anim-pop, .anim-fade, .anim-lift) {
+  opacity: 0;
+}
+
+.art.is-visible .anim-draw .draw-path {
+  animation: art-draw 1100ms var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+.art.is-visible .anim-draw {
+  animation: art-fade 300ms ease-out both;
+  animation-delay: var(--d, 0ms);
+}
+.art.is-visible .anim-fade {
+  animation: art-fade 700ms ease-out both;
+  animation-delay: var(--d, 0ms);
+}
+.art.is-visible .anim-pop {
+  transform-origin: center;
+  animation: art-pop 600ms var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+/* Parts that start "assembled" (offset by --from) and settle into place. */
+.art.is-visible .anim-lift {
+  animation: art-lift 1300ms var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes art-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes art-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes art-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes art-lift {
+  from {
+    opacity: 1;
+    transform: translate(0, var(--from, 0px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+/* Gentle loop reserved for tiny status lights; never behind text. */
+.art.is-visible .anim-blink {
+  animation: art-blink 2.4s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes art-blink {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art :is(.anim-draw, .anim-fade, .anim-pop, .anim-lift, .anim-blink),
+  .art .anim-draw .draw-path {
+    animation: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
+  }
+}
